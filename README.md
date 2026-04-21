@@ -4,31 +4,28 @@ A modern web application that lets you upload PDF documents and chat with them u
 
 ## Features
 
-✅ **PDF Upload** - Drag-and-drop support for multiple PDFs  
-✅ **Document Management** - View and delete uploaded documents  
-✅ **Local RAG Pipeline** - Fully local with Ollama (no cloud dependencies)  
-✅ **Conversational AI** - Chat interface powered by Llama 3.2 3B  
-✅ **Fast Embeddings** - Nomic embedding model for efficient semantic search  
-✅ **Source Attribution** - See which documents your answers come from  
-✅ **Modern UI** - Clean, responsive design with real-time chat  
+- **PDF Upload** – Drag-and-drop support for multiple PDFs  
+- **Document Management** – View and delete uploaded documents  
+- **Local RAG Pipeline** – Fully local with Ollama (no cloud dependencies)  
+- **Conversational AI** – Chat interface powered by Llama 3.2 3B  
+- **Fast Embeddings** – Nomic embedding model for efficient semantic search  
+- **Source Attribution** – See which documents your answers come from  
+- **Modern UI** – Clean, responsive design with real-time chat  
 
 ## Prerequisites
 
-- Python 3.8+
-- [Ollama](https://ollama.ai/) installed and running locally
-- At least 8GB RAM (16GB+ recommended for better performance)
+- Python 3.8+  
+- [Ollama](https://ollama.ai/) installed and running locally  
+- At least 8GB RAM (16GB+ recommended for better performance)  
 
 ## Setup
 
 ### 1. Install Ollama
-Download and install from [ollama.ai](https://ollama.ai)
+Download and install from [ollama.ai](https://ollama.ai/).
 
 ### 2. Pull Required Models
 ```bash
-# Pull the LLM model
 ollama pull llama3.2:3b
-
-# Pull the embedding model
 ollama pull nomic-embed-text:latest
 ```
 
@@ -36,23 +33,22 @@ ollama pull nomic-embed-text:latest
 ```bash
 ollama serve
 ```
-Ollama will run on `http://localhost:11434`
+Ollama will run on `http://localhost:11434`.
 
 ### 4. Set Up Flask App
-
 ```bash
 cd FlaskApp
 
 # Create virtual environment
 python -m venv myvenv
-source myvenv/bin/activate  # On Windows: myvenv\Scripts\activate
+source myvenv/bin/activate        # On Windows: myvenv\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
 ```
 
-### 5. Configure .env
-The `.env` file is pre-configured with optimal settings:
+### 5. Configure `.env`
+The `.env` file is pre‑configured with optimal settings:
 ```
 FLASK_ENV=development
 SECRET_KEY=your-secret-key-change-this
@@ -66,85 +62,80 @@ MAX_UPLOAD_SIZE=52428800
 ```bash
 python app.py
 ```
-
-The app will be available at: `http://localhost:5000`
+The app will be available at `http://localhost:5000`.
 
 ## Usage
 
-1. **Upload Documents** - Go to the upload page and drag-drop PDF files
-2. **Start Chatting** - Click "Start Chatting" to initialize the RAG pipeline
-3. **Ask Questions** - Chat with your documents in the chat interface
-4. **View Sources** - See which PDF documents the answers come from
-5. **Delete Files** - Remove documents from the upload page
+1. **Upload Documents** – Go to the upload page and drag‑and‑drop PDF files.  
+2. **Start Chatting** – Click “Start Chatting” to initialize the RAG pipeline.  
+3. **Ask Questions** – Chat with your documents in the chat interface.  
+4. **View Sources** – See which PDF documents the answers come from.  
+5. **Delete Files** – Remove documents from the upload page.  
 
 ## How It Works
 
 ### Architecture
 ```
-PDF Upload
-    ↓
-PDF Text Extraction (PyPDF2)
-    ↓ng (300 char chunks, 50 overlap)
-    ↓
-Embeddings (Ollama - nomic-embed-text)
-    ↓
-Vector Store (FAISS)
-    ↓
-User Query
-    ↓
-Similarity Search (k=10 documents)
-    ↓
-LLM Generation (Ollama - Llama 3.2 3B)
-    ↓
-Response + Sources
+PDF Upload → PDF Text Extraction (PyPDF2) → Chunking (300 chars, 50 overlap)
+       → Embeddings (Ollama – nomic-embed-text) → Vector Store (FAISS)
+       → User Query → Similarity Search (k=10) → LLM Generation (Ollama – Llama 3.2 3B)
+       → Response + Sources
 ```
 
 ### Technologies
-- **Framework**: Flask
-- **Vector Store**: FAISS
-- **Embeddings**: Ollama (nomic-embed-text:latest)
-- **LLM**: Ollama (llama3.2:3b)
-- **PDF Processing**: PyPDF2
-- **Text Splitting**: LangChain RecursiveCharacterTextSplitter
-- **Frontend**: HTML5 + CSS3 + Vanilla JS
-- **Local Processing**: All models run locally on port 11434
-- **Frontend**: HTML5 + CSS3 + Vanilla JS
+- **Framework**: Flask  
+- **Vector Store**: FAISS  
+- **Embeddings**: Ollama (`nomic-embed-text:latest`)  
+- **LLM**: Ollama (`llama3.2:3b`)  
+- **PDF Processing**: PyPDF2  
+- **Text Splitting**: LangChain `RecursiveCharacterTextSplitter`  
+- **Frontend**: HTML5 + CSS3 + Vanilla JS  
+- **Local Processing**: All models run locally on port 11434  
 
 ## Troubleshooting
 
-##Verify port 11434 is accessible
-- Check firewall settings
-
 ### Slow embeddings or LLM responses
-- First run downloads the models (~8GB combined)
-- Subsequent runs are faster
-- Llama 3.2 3B is optimized for CPU, but GPU acceleration is beneficial
-- For faster performance on CPU, consider a smaller model
+- First run downloads the models (~8GB combined). Subsequent runs are faster.  
+- Llama 3.2 3B is CPU‑optimised, but GPU acceleration helps. For better CPU performance, consider a smaller model (e.g., `ollama pull mistral`).  
 
 ### Out of memory
-- Reduce `chunk_size` in `app.py` function `build_rag_pipeline()`
-- Use a smaller Ollama model (e.g., `ollama pull mistral`)
-- Ensure you have at least 8GB RAM available
-- Close other applications consuming memory
+- Reduce `chunk_size` in `app.py` (function `build_rag_pipeline()`).  
+- Use a smaller Ollama model.  
+- Ensure at least 8GB free RAM; close other memory‑intensive applications.  
 
 ### Models not found
-- Verify models are downloaded: `ollama list`
-- Pull missing models: 
+- Verify models are downloaded: `ollama list`  
+- Pull missing models:  
   ```bash
   ollama pull llama3.2:3b
   ollama pull nomic-embed-text:latest
   ```
-- Check Ollama service is running on port 11434
+- Check that Ollama is running on port 11434.  
 
-### Chatbot says "I don't have this information"
-- Verify the PDF contains the information you're asking about
-- Try asking differently - semantic search looks for meaning, not exact phrases
-- Ensure PDFs are text-based (not scanned images)
-- Check console for debug logs showing retrieved documents
-- Check Ollama service is running on port 11434t`
-- Tr.gitignore            # Git ignore rules
-├── README.md             # This file
-├── y a different model: `ollama pull llama2`
+### Chatbot says “I don’t have this information”
+- Verify the PDF contains the information you’re asking about.  
+- Try rephrasing your question – semantic search looks for meaning, not exact phrases.  
+- Ensure PDFs are text‑based (not scanned images).  
+- Check the console for debug logs showing retrieved documents.  
+
+### General checks
+- Verify port 11434 is accessible (check firewall settings).  
+- Restart Ollama occasionally to free memory.  
+- Smaller PDFs are processed faster.  
+- PDFs are re‑processed on each chat session start (no caching).  
+
+## Configuration Parameters
+
+Fine‑tune the RAG pipeline by editing `app.py`:
+
+```python
+# Text splitting (line ~85)
+chunk_size=300        # Smaller = more specific chunks
+chunk_overlap=50      # Overlap for context continuity
+
+# Document retrieval (line ~210)
+k=10                  # Number of documents to retrieve (higher = more context)
+```
 
 ## Project Structure
 
@@ -153,73 +144,43 @@ FlaskApp/
 ├── app.py                 # Main Flask application
 ├── requirements.txt       # Python dependencies
 ├── .env                   # Environment variables
-├── uploads/              # Uploaded PDF storage
+├── uploads/               # Uploaded PDF storage
 ├── templates/
-│   ├── base.html         # Base template
-│   ├── upload.html       # Upload page
-│   └── chat.html         # Chat interface
+│   ├── base.html          # Base template
+│   ├── upload.html        # Upload page
+│   └── chat.html          # Chat interface
 └── static/
-    └── style.css         # Styling
+    └── style.css          # Styling
 ```
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|-----text-based PDFs (OCR scanned documents work worse)
-- Smaller PDFs are processed faster
-- Run on systems with 8GB+ RAM for optimal performance
-- GPU support significantly speeds up embeddings (requires GPU-enabled Ollama)
-- Restart Ollama occasionally to free up memory
-
-## Configuration Parameters
-
-You can fine-tune the RAG pipeline by editing `app.py`:
-
-```python
-# Text splitting (line ~85)
-chunk_size=300,        # Smaller = more specific chunks
-chunk_overlap=50       # Overlap for context continuity
-
-# Document retrieval (line ~210)
-k=10                   # Number of documents to retrieve (higher = more context)
-```
+| Endpoint          | Method | Description                          |
+|-------------------|--------|--------------------------------------|
+| `/`               | GET    | Upload page                          |
+| `/upload`         | POST   | Handle PDF uploads                   |
+| `/delete/<id>`    | POST   | Delete an uploaded PDF               |
+| `/build_rag`      | POST   | Build RAG pipeline and start chat    |
+| `/chat`           | POST   | Send a message and get response      |
+| `/chat_page`      | GET    | Render chat interface                |
 
 ## Limitations
 
-- PDFs are re-processed on each chat session start (no caching)
-- No persistent database (embeddings not saved between sessions)
-- Max file size: 50MB per PDF
-- Single-user application (not optimized for concurrent usage)
-- Works best with English text
+- No persistent vector store – embeddings are rebuilt each session.  
+- No database – uploaded files are stored only in the `uploads/` folder.  
+- Max file size: 50MB per PDF.  
+- Single‑user application (not optimised for concurrent use).  
+- Works best with English text‑based PDFs (scanned documents/OCR are not supported).  
 
 ## Future Enhancements
 
-- Persistent vector store (save FAISS index to disk)
-- Multi-language support
-- Web-based RAG parameter tuning
-- Export chat history
-- Multi-user support with sessions
-- Stream LLM responses for faster feedback
+- Persistent vector store (save FAISS index to disk)  
+- Multi‑language support  
+- Web‑based RAG parameter tuning  
+- Export chat history  
+- Multi‑user support with sessions  
+- Stream LLM responses for faster feedback  
 
 ## License
 
-Free to use for personal and educational purposes.
-
-## Support
-
-For issues or questions:
-1. Check the Troubleshooting section
-2. Review console output for debug logs (marked with emojis 🔍📄📝🤖)
-3. Verify Ollama is running and models are downloaded
-4. Ensure PDFs are valid text-based documentsenabled setup)
-
-## Limitations
-
-- PDFs are re-processed on each chat session start
-- No persistent database (uploads deleted when folder cleared)
-- Max file size: 50MB per PDF
-- Runs locally (not suitable for many concurrent users)
-
-## License
-
-Free to use for personal/educational purposes.
+GPL v3.0
