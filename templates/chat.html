@@ -4,8 +4,14 @@
 
 {% block header_actions %}
 <div class="header-actions">
-    <span class="chat-status">📚 {{ uploaded_files|length }} document(s) loaded</span>
-    <button class="btn btn-secondary btn-small" onclick="endChat()">↩️ Back to Upload</button>
+    <span class="chat-status">
+        <i class="fas fa-book"></i>
+        {{ uploaded_files|length }} document(s) loaded
+    </span>
+    <button class="btn btn-secondary btn-small" onclick="endChat()">
+        <i class="fas fa-arrow-left"></i>
+        Back to Upload
+    </button>
 </div>
 {% endblock %}
 
@@ -15,8 +21,11 @@
     <div class="chat-messages" id="chatMessages">
         <div class="message bot-message">
             <div class="message-content">
-                <p>👋 Hello! I'm ready to answer questions about your uploaded documents.</p>
-                <p style="font-size: 0.9em; margin-top: 8px; opacity: 0.8;">Ask me anything related to the content of your PDFs.</p>
+                <p><i class="fas fa-hand"></i> Hello! I'm ready to answer questions about your uploaded documents.</p>
+                <p style="font-size: 0.9em; margin-top: 8px; opacity: 0.8;">
+                    <i class="fas fa-lightbulb"></i>
+                    Ask me anything related to the content of your PDFs.
+                </p>
             </div>
         </div>
     </div>
@@ -32,7 +41,10 @@
                     autocomplete="off"
                     required
                 >
-                <button type="submit" class="btn btn-primary btn-send">Send</button>
+                <button type="submit" class="btn btn-primary btn-send">
+                    <i class="fas fa-paper-plane"></i>
+                    Send
+                </button>
             </div>
         </form>
     </div>
@@ -40,18 +52,9 @@
     <!-- Loading Indicator -->
     <div id="loadingIndicator" class="loading-indicator" style="display: none;">
         <div class="spinner-small"></div>
-        <span>Thinking...</span>
+        <span><i class="fas fa-brain"></i> Thinking...</span>
     </div>
 </div>
-{% endblock %}
-
-{% block extra_css %}
-<style>
-    .chat-status {
-        font-size: 0.9em;
-        color: #666;
-    }
-</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -67,7 +70,7 @@
         
         if (!query) return;
 
-        // Add user message to chat
+        // Add user message to chat with animation
         addMessage(query, 'user');
         queryInput.value = '';
         queryInput.focus();
@@ -90,12 +93,12 @@
             if (data.success) {
                 addMessage(data.response, 'bot', data.sources);
             } else {
-                addMessage(`Error: ${data.message}`, 'error');
+                addMessage(`<i class="fas fa-exclamation-circle"></i> Error: ${data.message}`, 'error');
             }
         })
         .catch(error => {
             loadingIndicator.style.display = 'none';
-            addMessage(`Error: Failed to get response`, 'error');
+            addMessage(`<i class="fas fa-exclamation-circle"></i> Error: Failed to get response`, 'error');
             console.error('Error:', error);
         });
     }
@@ -107,13 +110,20 @@
         let content = `<div class="message-content"><p>${escapeHtml(text)}</p>`;
         
         if (sources && sources.length > 0) {
-            content += `<div class="message-sources"><strong>Sources:</strong> ${sources.join(', ')}</div>`;
+            content += `<div class="message-sources">
+                <strong><i class="fas fa-file-alt"></i> Sources:</strong>
+                <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                    ${sources.map(src => `<span style="background: rgba(0,0,0,0.1); padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.85em;">📄 ${escapeHtml(src)}</span>`).join('')}
+                </div>
+            </div>`;
         }
         
         content += '</div>';
         messageDiv.innerHTML = content;
 
         chatMessages.appendChild(messageDiv);
+        
+        // Smooth scroll to bottom
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
@@ -132,5 +142,35 @@
 
     // Focus input on load
     queryInput.focus();
+
+    // Enter key handler with shift for new line support
+    chatForm.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage(e);
+        }
+    });
 </script>
+
+<style>
+    .chat-status {
+        font-size: 0.9em;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: slideDown 0.4s ease-out;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 {% endblock %}

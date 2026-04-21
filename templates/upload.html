@@ -5,19 +5,23 @@
 {% block content %}
 <div class="upload-container">
     <div class="upload-section">
-        <h2>📄 Upload PDF Documents</h2>
+        <h2><i class="fas fa-file-pdf"></i> Upload PDF Documents</h2>
         <p class="subtitle">Upload one or more PDF files to start chatting with your documents</p>
 
         <!-- File Upload Area -->
         <div class="upload-area" id="uploadArea">
-            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-            </svg>
+            <i class="fas fa-cloud-arrow-up upload-icon"></i>
             <h3>Drag and drop your PDFs here</h3>
             <p>or</p>
             <input type="file" id="fileInput" multiple accept=".pdf" style="display: none;">
-            <button class="btn btn-secondary" id="browseBtn">Browse Files</button>
-            <p class="upload-info">Maximum file size: 50MB per file</p>
+            <button class="btn btn-secondary" id="browseBtn">
+                <i class="fas fa-folder-open"></i>
+                Browse Files
+            </button>
+            <p class="upload-info">
+                <i class="fas fa-info-circle"></i>
+                Maximum file size: 50MB per file
+            </p>
         </div>
 
         <!-- Status Messages -->
@@ -26,17 +30,18 @@
         <!-- Uploaded Files List -->
         {% if uploaded_files %}
         <div class="files-section">
-            <h3>📦 Uploaded Files ({{ uploaded_files|length }})</h3>
+            <h3><i class="fas fa-cube"></i> Uploaded Files ({{ uploaded_files|length }})</h3>
             <ul class="files-list">
                 {% for file in uploaded_files %}
                 <li class="file-item">
                     <span class="file-name">
-                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M4 4a2 2 0 012-2h6a1 1 0 01.707.293l2.828 2.829A1 1 0 0116 4v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 000 2h6a1 1 0 100-2H6zm0 4a1 1 0 000 2h6a1 1 0 100-2H6z" />
-                        </svg>
-                        {{ file }}
+                        <i class="fas fa-file-pdf file-icon"></i>
+                        <span>{{ file }}</span>
                     </span>
-                    <button class="btn btn-delete" onclick="deleteFile('{{ file }}')">Delete</button>
+                    <button class="btn btn-delete" onclick="deleteFile('{{ file }}')">
+                        <i class="fas fa-trash"></i>
+                        Delete
+                    </button>
                 </li>
                 {% endfor %}
             </ul>
@@ -47,10 +52,14 @@
         <div class="action-buttons">
             {% if uploaded_files %}
             <button class="btn btn-primary btn-large" id="startChatBtn">
-                💬 Start Chatting
+                <i class="fas fa-comments"></i>
+                Start Chatting
             </button>
             {% else %}
-            <p class="no-files-message">Upload at least one PDF file to continue</p>
+            <p class="no-files-message">
+                <i class="fas fa-exclamation-circle"></i>
+                Upload at least one PDF file to continue
+            </p>
             {% endif %}
         </div>
     </div>
@@ -59,7 +68,7 @@
 <!-- Loading Spinner -->
 <div id="loadingSpinner" class="loading-spinner" style="display: none;">
     <div class="spinner"></div>
-    <p>Processing documents...</p>
+    <p><i class="fas fa-cog fa-spin"></i> Processing documents...</p>
 </div>
 {% endblock %}
 
@@ -72,8 +81,14 @@
     const startChatBtn = document.getElementById('startChatBtn');
     const loadingSpinner = document.getElementById('loadingSpinner');
 
-    // Browse button
-    browseBtn.addEventListener('click', () => fileInput.click());
+    // Browse button with smooth animation
+    browseBtn.addEventListener('click', () => {
+        browseBtn.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            browseBtn.style.transform = 'scale(1)';
+            fileInput.click();
+        }, 50);
+    });
 
     // Drag and drop
     uploadArea.addEventListener('dragover', (e) => {
@@ -100,12 +115,12 @@
     function handleFiles(files) {
         for (let file of files) {
             if (file.type !== 'application/pdf') {
-                showStatus(`❌ ${file.name} is not a PDF file`, 'error');
+                showStatus(`<i class="fas fa-times-circle"></i> ${file.name} is not a PDF file`, 'error');
                 continue;
             }
 
             if (file.size > 50 * 1024 * 1024) {
-                showStatus(`❌ ${file.name} is too large (max 50MB)`, 'error');
+                showStatus(`<i class="fas fa-times-circle"></i> ${file.name} is too large (max 50MB)`, 'error');
                 continue;
             }
 
@@ -124,14 +139,14 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showStatus(`✅ ${data.message}`, 'success');
+                showStatus(`<i class="fas fa-check-circle"></i> ${data.message}`, 'success');
                 setTimeout(() => location.reload(), 1500);
             } else {
-                showStatus(`❌ ${data.message}`, 'error');
+                showStatus(`<i class="fas fa-times-circle"></i> ${data.message}`, 'error');
             }
         })
         .catch(error => {
-            showStatus(`❌ Error: ${error}`, 'error');
+            showStatus(`<i class="fas fa-times-circle"></i> Error: ${error}`, 'error');
         });
     }
 
@@ -144,18 +159,18 @@
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showStatus(`✅ ${data.message}`, 'success');
+                showStatus(`<i class="fas fa-check-circle"></i> ${data.message}`, 'success');
                 setTimeout(() => location.reload(), 1000);
             } else {
-                showStatus(`❌ ${data.message}`, 'error');
+                showStatus(`<i class="fas fa-times-circle"></i> ${data.message}`, 'error');
             }
         });
     }
 
     function showStatus(message, type) {
-        statusMessage.textContent = message;
+        statusMessage.innerHTML = message;
         statusMessage.className = `status-message ${type}`;
-        statusMessage.style.display = 'block';
+        statusMessage.style.display = 'flex';
     }
 
     // Start chat
@@ -171,16 +186,16 @@
             .then(data => {
                 loadingSpinner.style.display = 'none';
                 if (data.success) {
-                    showStatus(`✅ ${data.message}`, 'success');
+                    showStatus(`<i class="fas fa-check-circle"></i> ${data.message}`, 'success');
                     setTimeout(() => window.location.href = '/chat', 2000);
                 } else {
-                    showStatus(`❌ ${data.message}`, 'error');
+                    showStatus(`<i class="fas fa-times-circle"></i> ${data.message}`, 'error');
                     startChatBtn.disabled = false;
                 }
             })
             .catch(error => {
                 loadingSpinner.style.display = 'none';
-                showStatus(`❌ Error: ${error}`, 'error');
+                showStatus(`<i class="fas fa-times-circle"></i> Error: ${error}`, 'error');
                 startChatBtn.disabled = false;
             });
         });

@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}PDF RAG Chatbot{% endblock %}</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -11,7 +14,10 @@
     <div class="container">
         <header class="header">
             <div class="header-content">
-                <h1 class="logo">📚 PDF RAG Chatbot</h1>
+                <h1 class="logo">
+                    <i class="fas fa-book-open"></i>
+                    PDF RAG Chatbot
+                </h1>
                 {% block header_actions %}{% endblock %}
             </div>
         </header>
@@ -21,7 +27,7 @@
         </main>
 
         <footer class="footer">
-            <p>&copy; 2026 PDF RAG Chatbot. Powered by LangChain & Ollama</p>
+            <p><i class="fas fa-copyright"></i> 2026 PDF RAG Chatbot. Powered by LangChain & Ollama</p>
         </footer>
     </div>
 
