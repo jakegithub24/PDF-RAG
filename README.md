@@ -21,7 +21,7 @@ A modern web application that lets you upload PDF documents and chat with them u
 ## Setup
 
 ### 1. Install Ollama
-Download and install from [ollama.ai](https://ollama.ai/).
+Download and install from [ollamac.com](https://ollama.com/).
 
 ### 2. Pull Required Models
 ```bash
