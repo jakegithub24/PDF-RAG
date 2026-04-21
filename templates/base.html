@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PDF RAG Chatbot{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">📚 PDF RAG Chatbot</h1>
+                {% block header_actions %}{% endblock %}
+            </div>
+        </header>
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 PDF RAG Chatbot. Powered by LangChain & Ollama</p>
+        </footer>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

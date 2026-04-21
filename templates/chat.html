@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Chat - PDF RAG Chatbot{% endblock %}
+
+{% block header_actions %}
+<div class="header-actions">
+    <span class="chat-status">📚 {{ uploaded_files|length }} document(s) loaded</span>
+    <button class="btn btn-secondary btn-small" onclick="endChat()">↩️ Back to Upload</button>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <!-- Chat Messages -->
+    <div class="chat-messages" id="chatMessages">
+        <div class="message bot-message">
+            <div class="message-content">
+                <p>👋 Hello! I'm ready to answer questions about your uploaded documents.</p>
+                <p style="font-size: 0.9em; margin-top: 8px; opacity: 0.8;">Ask me anything related to the content of your PDFs.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Input -->
+    <div class="chat-input-section">
+        <form id="chatForm" onsubmit="sendMessage(event)">
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    id="queryInput"
+                    placeholder="Ask a question about your documents..."
+                    autocomplete="off"
+                    required
+                >
+                <button type="submit" class="btn btn-primary btn-send">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="loading-indicator" style="display: none;">
+        <div class="spinner-small"></div>
+        <span>Thinking...</span>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .chat-status {
+        font-size: 0.9em;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const chatMessages = document.getElementById('chatMessages');
+    const queryInput = document.getElementById('queryInput');
+    const chatForm = document.getElementById('chatForm');
+    const loadingIndicator = document.getElementById('loadingIndicator');
+
+    function sendMessage(event) {
+        event.preventDefault();
+        const query = queryInput.value.trim();
+        
+        if (!query) return;
+
+        // Add user message to chat
+        addMessage(query, 'user');
+        queryInput.value = '';
+        queryInput.focus();
+
+        // Show loading indicator
+        loadingIndicator.style.display = 'flex';
+
+        // Send query to backend
+        fetch('/query', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query: query })
+        })
+        .then(response => response.json())
+        .then(data => {
+            loadingIndicator.style.display = 'none';
+            
+            if (data.success) {
+                addMessage(data.response, 'bot', data.sources);
+            } else {
+                addMessage(`Error: ${data.message}`, 'error');
+            }
+        })
+        .catch(error => {
+            loadingIndicator.style.display = 'none';
+            addMessage(`Error: Failed to get response`, 'error');
+            console.error('Error:', error);
+        });
+    }
+
+    function addMessage(text, type = 'user', sources = []) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}-message`;
+
+        let content = `<div class="message-content"><p>${escapeHtml(text)}</p>`;
+        
+        if (sources && sources.length > 0) {
+            content += `<div class="message-sources"><strong>Sources:</strong> ${sources.join(', ')}</div>`;
+        }
+        
+        content += '</div>';
+        messageDiv.innerHTML = content;
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
+    function endChat() {
+        if (confirm('End chat session and return to upload page?')) {
+            fetch('/clear-session', { method: 'POST' })
+            .then(() => window.location.href = '/');
+        }
+    }
+
+    // Focus input on load
+    queryInput.focus();
+</script>
+{% endblock %}

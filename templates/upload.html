@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Documents - PDF RAG Chatbot{% endblock %}
+
+{% block content %}
+<div class="upload-container">
+    <div class="upload-section">
+        <h2>📄 Upload PDF Documents</h2>
+        <p class="subtitle">Upload one or more PDF files to start chatting with your documents</p>
+
+        <!-- File Upload Area -->
+        <div class="upload-area" id="uploadArea">
+            <svg class="upload-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+            </svg>
+            <h3>Drag and drop your PDFs here</h3>
+            <p>or</p>
+            <input type="file" id="fileInput" multiple accept=".pdf" style="display: none;">
+            <button class="btn btn-secondary" id="browseBtn">Browse Files</button>
+            <p class="upload-info">Maximum file size: 50MB per file</p>
+        </div>
+
+        <!-- Status Messages -->
+        <div id="statusMessage" class="status-message" style="display: none;"></div>
+
+        <!-- Uploaded Files List -->
+        {% if uploaded_files %}
+        <div class="files-section">
+            <h3>📦 Uploaded Files ({{ uploaded_files|length }})</h3>
+            <ul class="files-list">
+                {% for file in uploaded_files %}
+                <li class="file-item">
+                    <span class="file-name">
+                        <svg class="file-icon" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M4 4a2 2 0 012-2h6a1 1 0 01.707.293l2.828 2.829A1 1 0 0116 4v12a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 000 2h6a1 1 0 100-2H6zm0 4a1 1 0 000 2h6a1 1 0 100-2H6z" />
+                        </svg>
+                        {{ file }}
+                    </span>
+                    <button class="btn btn-delete" onclick="deleteFile('{{ file }}')">Delete</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            {% if uploaded_files %}
+            <button class="btn btn-primary btn-large" id="startChatBtn">
+                💬 Start Chatting
+            </button>
+            {% else %}
+            <p class="no-files-message">Upload at least one PDF file to continue</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Loading Spinner -->
+<div id="loadingSpinner" class="loading-spinner" style="display: none;">
+    <div class="spinner"></div>
+    <p>Processing documents...</p>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const browseBtn = document.getElementById('browseBtn');
+    const statusMessage = document.getElementById('statusMessage');
+    const startChatBtn = document.getElementById('startChatBtn');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    // Browse button
+    browseBtn.addEventListener('click', () => fileInput.click());
+
+    // Drag and drop
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.classList.add('dragover');
+    });
+
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.classList.remove('dragover');
+    });
+
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        handleFiles(e.target.files);
+    });
+
+    function handleFiles(files) {
+        for (let file of files) {
+            if (file.type !== 'application/pdf') {
+                showStatus(`❌ ${file.name} is not a PDF file`, 'error');
+                continue;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                showStatus(`❌ ${file.name} is too large (max 50MB)`, 'error');
+                continue;
+            }
+
+            uploadFile(file);
+        }
+    }
+
+    function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showStatus(`✅ ${data.message}`, 'success');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showStatus(`❌ ${data.message}`, 'error');
+            }
+        })
+        .catch(error => {
+            showStatus(`❌ Error: ${error}`, 'error');
+        });
+    }
+
+    function deleteFile(filename) {
+        if (!confirm(`Delete "${filename}"?`)) return;
+
+        fetch(`/delete/${filename}`, {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showStatus(`✅ ${data.message}`, 'success');
+                setTimeout(() => location.reload(), 1000);
+            } else {
+                showStatus(`❌ ${data.message}`, 'error');
+            }
+        });
+    }
+
+    function showStatus(message, type) {
+        statusMessage.textContent = message;
+        statusMessage.className = `status-message ${type}`;
+        statusMessage.style.display = 'block';
+    }
+
+    // Start chat
+    if (startChatBtn) {
+        startChatBtn.addEventListener('click', () => {
+            loadingSpinner.style.display = 'flex';
+            startChatBtn.disabled = true;
+
+            fetch('/start-chat', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                loadingSpinner.style.display = 'none';
+                if (data.success) {
+                    showStatus(`✅ ${data.message}`, 'success');
+                    setTimeout(() => window.location.href = '/chat', 2000);
+                } else {
+                    showStatus(`❌ ${data.message}`, 'error');
+                    startChatBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                loadingSpinner.style.display = 'none';
+                showStatus(`❌ Error: ${error}`, 'error');
+                startChatBtn.disabled = false;
+            });
+        });
+    }
+</script>
+{% endblock %}
