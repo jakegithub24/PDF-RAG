@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +18,12 @@
                     <i class="fas fa-book-open"></i>
                     PDF RAG Chatbot
                 </h1>
-                {% block header_actions %}{% endblock %}
+                <div class="header-actions">
+                    {% block header_actions %}{% endblock %}
+                    <button class="theme-toggle" id="themeToggle" title="Toggle Dark/Light Mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -30,6 +35,58 @@
             <p><i class="fas fa-copyright"></i> 2026 PDF RAG Chatbot. Powered by LangChain & Ollama</p>
         </footer>
     </div>
+
+    <script>
+        // Theme Management
+        (function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const html = document.documentElement;
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            
+            // Initialize theme from localStorage or system preference
+            function initTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+                applyTheme(theme);
+            }
+            
+            // Apply theme
+            function applyTheme(theme) {
+                html.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                updateThemeIcon(theme);
+            }
+            
+            // Update icon based on theme
+            function updateThemeIcon(theme) {
+                const icon = themeToggle.querySelector('i');
+                if (theme === 'dark') {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+            
+            // Toggle theme
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = html.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                applyTheme(newTheme);
+            });
+            
+            // Initialize on load
+            initTheme();
+            
+            // Listen for system theme changes
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                if (!localStorage.getItem('theme')) {
+                    applyTheme(e.matches ? 'dark' : 'light');
+                }
+            });
+        })();
+    </script>
 
     {% block extra_js %}{% endblock %}
 </body>
