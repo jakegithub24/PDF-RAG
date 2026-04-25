@@ -517,6 +517,132 @@ body {
     background: var(--glass-bg);
 }
 
+/* Bot Message Paragraph Formatting */
+.bot-message .message-content p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.bot-message .message-content p:first-child {
+    margin-top: 0;
+}
+
+.bot-message .message-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Markdown Elements in Bot Messages */
+.bot-message .message-content h1,
+.bot-message .message-content h2,
+.bot-message .message-content h3,
+.bot-message .message-content h4,
+.bot-message .message-content h5,
+.bot-message .message-content h6 {
+    margin: 1rem 0 0.5rem 0;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.bot-message .message-content h1 { font-size: 1.4rem; }
+.bot-message .message-content h2 { font-size: 1.3rem; }
+.bot-message .message-content h3 { font-size: 1.2rem; }
+.bot-message .message-content h4 { font-size: 1.1rem; }
+.bot-message .message-content h5 { font-size: 1rem; }
+.bot-message .message-content h6 { font-size: 0.95rem; }
+
+.bot-message .message-content ul,
+.bot-message .message-content ol {
+    margin: 0.8rem 0 0.8rem 1.5rem;
+    padding-left: 1rem;
+}
+
+.bot-message .message-content li {
+    margin: 0.4rem 0;
+    line-height: 1.6;
+}
+
+.bot-message .message-content code {
+    background: rgba(139, 92, 246, 0.15);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9em;
+}
+
+.bot-message .message-content pre {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    margin: 0.8rem 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.bot-message .message-content pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+}
+
+.bot-message .message-content blockquote {
+    border-left: 4px solid var(--accent);
+    padding-left: 1rem;
+    margin: 0.8rem 0;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+.bot-message .message-content strong,
+.bot-message .message-content b {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.bot-message .message-content em,
+.bot-message .message-content i {
+    font-style: italic;
+}
+
+.bot-message .message-content a {
+    color: var(--accent);
+    text-decoration: underline;
+    transition: opacity 0.2s;
+}
+
+.bot-message .message-content a:hover {
+    opacity: 0.8;
+}
+
+.bot-message .message-content hr {
+    border: none;
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
+    margin: 1rem 0;
+}
+
+.bot-message .message-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.8rem 0;
+    font-size: 0.95rem;
+}
+
+.bot-message .message-content table th,
+.bot-message .message-content table td {
+    padding: 0.6rem;
+    text-align: left;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.bot-message .message-content table th {
+    background: rgba(139, 92, 246, 0.1);
+    font-weight: 600;
+}
+
 .user-message .message-content {
     background: linear-gradient(135deg, var(--accent), var(--accent-hover));
     color: var(--user-msg-color);   /* ← dynamic: black in light, white in dark */

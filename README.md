@@ -26,7 +26,7 @@ Download and install from [ollama.com](https://ollama.com/).
 ### 2. Pull Required Models
 ```bash
 ollama pull llama3.2:3b
-ollama pull nomic-embed-text:latest
+ollama pull nomic-embed-text:latest (v1.5)
 ```
 
 ### 3. Start Ollama

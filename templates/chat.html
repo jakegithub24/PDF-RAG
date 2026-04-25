@@ -105,7 +105,21 @@
         const messageDiv = document.createElement('div');
         messageDiv.className = `message ${type}-message`;
 
-        let content = `<div class="message-content"><p>${escapeHtml(text)}</p>`;
+        let content = '<div class="message-content">';
+        
+        // Parse markdown for bot messages, escape HTML for user messages
+        if (type === 'bot') {
+            try {
+                content += marked.parse(escapeHtml(text));
+            } catch (e) {
+                content += `<p>${escapeHtml(text)}</p>`;
+            }
+        } else if (type === 'error') {
+            content += `<p>${text}</p>`;
+        } else {
+            // User message - just wrap in p tag
+            content += `<p>${escapeHtml(text)}</p>`;
+        }
         
         if (sources && sources.length > 0) {
             content += `<div class="message-sources">
